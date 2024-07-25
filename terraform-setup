@@ -1,0 +1,65 @@
+provider.tf===================================
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "5.59.0"
+    }
+  }
+}
+
+provider "aws" {
+  region     = "us-west-1"
+  access_key = "abscd"
+  secret_key = "abcddd"
+}
+
+terraform init
+=======================================================
+ec2.tf
+resource "aws_instance" "example" {
+
+  ami           = "ami-04a81a99f5ec58529" # Replace with a valid AMI ID for your region
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "server-1"
+  }
+}
+
+output "instance_id" {
+
+
+======================================================
+
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.59.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-west-1"
+}
+
+resource "aws_instance" "webserver" {
+  count         = 4
+  ami           = "ami-04a81a99f5ec58529" # Replace with a valid AMI ID for your region
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "server-${count.index + 1}" # Name each instance with an index starting from 1
+  }
+}
+
+output "public_ips" {
+  value = [for instance in aws_instance.webserver : instance.public_ip]
+}
+
+===================================================================================================
+
+terraform destroy -target=aws_instance.webserver[2]
